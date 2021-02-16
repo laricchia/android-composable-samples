@@ -51,7 +51,9 @@ import kotlinx.coroutines.launch
                     },
                     bodyContent = {
                         // A surface container using the 'background' color from the theme
-                        Surface(color = MaterialTheme.colors.background) {
+                        Surface(color = MaterialTheme.colors.background,
+                        elevation = 4.dp
+                            ) {
                             Column(
                                 Modifier
                                     // Set column height as 70% of the parent
