@@ -4,8 +4,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -17,6 +15,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.github.laricchia.androidcomposablesamples.samplenavigation.FirstPage
+import com.github.laricchia.androidcomposablesamples.samplenavigation.SampleElement
+import com.github.laricchia.androidcomposablesamples.samplenavigation.SecondPage
 import com.github.laricchia.androidcomposablesamples.ui.theme.AndroidComposableSamplesTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,8 +30,6 @@ import kotlinx.coroutines.launch
  class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val colorState = mutableStateOf(Color.DarkGray)
 
         setContent {
             AndroidComposableSamplesTheme {
@@ -50,22 +52,15 @@ import kotlinx.coroutines.launch
                         }
                     },
                     bodyContent = {
-                        // A surface container using the 'background' color from the theme
-                        Surface(color = MaterialTheme.colors.background,
-                        elevation = 4.dp
-                            ) {
-                            Column(
-                                Modifier
-                                    // Set column height as 70% of the parent
-                                    .fillMaxHeight(0.7f)
-                                    // Enables the scrolling in the column
-                                    .verticalScroll(rememberScrollState())
-                            ) {
-                                for (i in 1..11)
-                                    Greeting("Android $i")
-                                SampleImageWithText("Sample text with image")
-                                SampleColorChanger(color = colorState)
+                        val controller = rememberNavController()
+                        NavHost(
+                            navController = controller,
+                            startDestination = "firstPage"
+                        ) {
+                            composable("firstPage") {
+                                FirstPage(listOf(SampleElement("Title", "Content")), controller)
                             }
+                            composable("secondPage") { SecondPage(controller) }
                         }
                     }
                 )
@@ -73,6 +68,9 @@ import kotlinx.coroutines.launch
             }
         }
 
+
+        /*
+        val colorState = mutableStateOf(Color.DarkGray)
         val colors = listOf(Color.Blue, Color.Green, Color.Red, Color.DarkGray)
 
         CoroutineScope(Dispatchers.Default).launch {
@@ -83,7 +81,7 @@ import kotlinx.coroutines.launch
                 count ++
                 count %= colors.size
             }
-        }
+        }*/
     }
 }
 
@@ -108,7 +106,10 @@ fun Greeting(name: String) {
 
      val remHeight = 12.dp
      
-     Row( Modifier.padding(4.dp).wrapContentHeight() ) {
+     Row(
+         Modifier
+             .padding(4.dp)
+             .wrapContentHeight() ) {
          Image(
              painter = painterResource(id = R.drawable.ic_launcher_foreground),
              contentDescription = "Just an image",
